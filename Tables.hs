@@ -2,7 +2,7 @@
 
 module Tables where
 
-import           Prelude hiding (curry, fst, snd, uncurry, zip, zipWith)
+import           Prelude hiding (curry, fst, snd, uncurry, zip, zipWith, lookup)
 
 data Pair a b  = Pair a b
     deriving Show
@@ -57,6 +57,12 @@ lookup key ((key', val) : table)
   | key == key' = val
   | otherwise   = lookup key table
 
+lookup' :: Show key => Eq key => key -> [(key, val)] -> Maybe val
+lookup' _ [] = Nothing 
+lookup' key ((key', val) : table)
+  | key == key' = Just val
+  | otherwise   = lookup' key table
+
 delete :: Eq key => key -> [(key, val)] -> [(key, val)]
 delete _ [] = []
 delete key ((key', val) : table)
@@ -74,3 +80,15 @@ testTable =
   , (3, 10)
   , (4, 7)
   ]
+
+safeHead :: [a] -> Maybe a
+safeHead      [] = Nothing
+safeHead (x : _) = Just x
+
+safeMaximum :: Ord a => [a] -> Maybe a
+safeMaximum []       = Nothing
+safeMaximum (x : xs) = Just $ maximumAux x xs 
+
+maximumAux :: Ord a => a -> [a] -> a 
+maximumAux x []       = x
+maximumAux x (y : ys) = maximumAux (max x y) ys
