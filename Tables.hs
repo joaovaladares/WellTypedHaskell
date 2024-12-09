@@ -58,7 +58,7 @@ lookup key ((key', val) : table)
   | otherwise   = lookup key table
 
 lookup' :: Show key => Eq key => key -> [(key, val)] -> Maybe val
-lookup' _ [] = Nothing 
+lookup' _ [] = Nothing
 lookup' key ((key', val) : table)
   | key == key' = Just val
   | otherwise   = lookup' key table
@@ -92,3 +92,24 @@ safeMaximum (x : xs) = Just $ maximumAux x xs
 maximumAux :: Ord a => a -> [a] -> a 
 maximumAux x []       = x
 maximumAux x (y : ys) = maximumAux (max x y) ys
+
+fromMaybe :: a -> Maybe a -> a
+fromMaybe def Nothing  = def
+fromMaybe _   (Just x) = x
+
+mapMaybe :: (a -> b) -> Maybe a -> Maybe b -- available more generally as fmap or (<$>)
+mapMaybe _ Nothing  = Nothing
+mapMaybe f (Just x) = Just (f x)
+
+orelse :: Maybe a -> Maybe a -> Maybe a -- available more generally as (<|>)
+orelse Nothing y  = y
+orelse (Just x) _ = Just x
+
+safeExtract :: String -> Char
+safeExtract str = fromMaybe ' ' $ safeHead str
+
+alts :: [Maybe a] -> Maybe a
+alts []             = Nothing
+alts (Nothing : xs) = alts xs 
+alts (Just x : _)   = Just x
+
