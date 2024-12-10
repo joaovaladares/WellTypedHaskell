@@ -51,25 +51,27 @@ zipWith _  _         _      = []
 zipWith' :: (a -> b -> c) -> [a] -> [b] -> [c]
 zipWith' f xs ys = map (uncurry f) (zip xs ys)
 
+type Table key val = [(key, val)]
+
 lookup :: Show key => Eq key => key -> [(key, val)] -> val
 lookup key [] = error $ "Key " ++ show key ++ " not found"
 lookup key ((key', val) : table)
   | key == key' = val
   | otherwise   = lookup key table
 
-lookup' :: Show key => Eq key => key -> [(key, val)] -> Maybe val
+lookup' :: Show key => Eq key => key -> Table key val -> Maybe val
 lookup' _ [] = Nothing
 lookup' key ((key', val) : table)
   | key == key' = Just val
   | otherwise   = lookup' key table
 
-delete :: Eq key => key -> [(key, val)] -> [(key, val)]
+delete :: Eq key => key -> Table key val -> Table key val 
 delete _ [] = []
 delete key ((key', val) : table)
   | key == key' = delete key table 
   | otherwise   = (key', val) : delete key table
 
-delete' :: Eq key => key -> [(key, val)] -> [(key, val)]
+delete' :: Eq key => key -> Table key val -> Table key val
 delete' key = filter (\ (x,_) -> key /= x)
 
 testTable :: [(Int, Int)]
