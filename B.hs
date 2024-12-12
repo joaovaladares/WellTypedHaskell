@@ -589,4 +589,4 @@ search :: Eq a => a -> Tree a -> Maybe Path
 search x (Leaf y)
   | x == y = Just End
   | otherwise = Nothing
-search x (Node l r) = fmap LeftT (search x l) `orelse` fmap RightT (search x r) -- same as (LeftT <$> search x l) <|> (RightT <$> search x r)
+search x (Node l r) = (LeftT <$> search x l) <|> (RightT <$> search x r)
