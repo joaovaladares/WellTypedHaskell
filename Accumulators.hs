@@ -3,7 +3,7 @@
 
 module Accumulators where
 
-import           Prelude hiding (length)
+import           Prelude hiding (length, reverse)
 
 slowReverse :: [a] -> [a]
 slowReverse []       = []
@@ -14,7 +14,7 @@ slowReverse (x : xs) = slowReverse xs ++ [x]
 -- = slowReverse ([2..10000000] ++ [1])
 
 fastReverse :: [a] -> [a] -> [a]
-fastReverse acc []       = acc 
+fastReverse acc []       = acc
 fastReverse acc (x : xs) = fastReverse (x : acc) xs
 
 reverse :: [a] -> [a]
@@ -98,7 +98,7 @@ lengthAux acc (_ : xs) = lengthAux (acc + 1) xs
 
 -- Overflows with 1,000,000 elements if ghci is run with -K1M
 length :: [a] -> Int
-length = lengthAux 0 
+length = lengthAux 0
 
 lengthAux' :: Int -> [a] -> Int
 lengthAux' !acc []       = acc
@@ -108,3 +108,24 @@ lengthAux' !acc (_ : xs) = lengthAux' (acc + 1) xs
 -- So use bang patterns as a general rule for accumulators (making them strict)
 length' :: [a] -> Int
 length' = lengthAux' 0
+
+take' :: Int -> [a] -> [a]
+take' n xs = reverse $ takeAux' [] n xs
+
+-- Bad!!! We don't want to use accumulators here because it will walk
+-- through the whole list before returning the result
+takeAux' :: [a] -> Int -> [a] -> [a]
+takeAux' !acc _ []       = acc
+takeAux' !acc n (x : xs) = takeAux' (x : acc) (n - 1) xs
+
+-- Don't need to accumulate on map because the outermost call is already 
+-- a CONS
+-- map :: (a -> b) -> [a] -> [b]
+-- map _ []       = []
+-- map f (x : xs) = f x : map f xs
+map' :: (a -> b) -> [a] -> [b]
+map' f xs = reverse $ mapAux' [] f xs 
+
+mapAux' :: [b] -> (a -> b) -> [a] -> [b]
+mapAux' !acc _ []       = acc
+mapAux' !acc f (x : xs) = mapAux' (f x : acc) f xs
