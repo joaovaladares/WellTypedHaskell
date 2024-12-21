@@ -19,6 +19,13 @@ fn :: (a -> r -> r) -> r -> [a] -> r
 fn cons nil []       = nil
 fn cons nil (x : xs) = cons x (fn cons nil xs)
 
+-- another way to write foldr
+fn' :: (a -> r -> r) -> r -> [a] -> r
+fn' cons nil = go
+  where
+    go []       = nil
+    go (x : xs) = cons x (go xs)
+
 elem' :: Eq a => a -> [a] -> Bool
 elem' y = fn (\ x r -> x == y || r) False
 
@@ -37,3 +44,5 @@ filter' f = foldr (\ x r -> if f x then x : r else r) []
 any' :: (a -> Bool) -> [a] -> Bool
 any' f = foldr (\ x r -> f x || r) False
 
+length' :: [a] -> Int
+length' = foldr (\ _ r -> 1 + r) 0
