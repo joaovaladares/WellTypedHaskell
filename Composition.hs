@@ -2,7 +2,7 @@
 
 module Composition where
 
-import Prelude hiding ((.), id, and, ($))
+import Prelude hiding ((.), id, and, ($), replicate)
 
 (.) :: (b -> c) -> (a -> b) -> (a -> c)
 f . g = \x -> f (g x)
@@ -33,3 +33,6 @@ and = all id
 
 listOfFunctions :: [Int -> Int]
 listOfFunctions = [(+1), (*2), (+7), (*4)]
+
+replicate :: Int -> a -> [a]
+replicate n x = take n $ repeat x
